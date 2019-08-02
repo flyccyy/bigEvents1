@@ -17,8 +17,6 @@
             <a href="#" class="logo"><img src="images/logo.png" alt=""></a>
             <div class="copyright">CopyRight © 2019 深圳百秀信息技术股份有限公司<br>All Rights Reserved</div>
         </div>
-        <p>aa</p>
-        <p>bb</p>
         <div class="login_form_con">
             <div class="login_title"></div>
             <form class="login_form">
@@ -31,7 +29,34 @@
         </div>
 
     </div> 
-
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <script>
+        $(function(){
+            $('.input_sub').on('click',function(e){
+                e.preventDefault();
+                var username = $('.input_txt').val();
+                var password = $('.input_pass').val();
+                if(username == "" || password == ""){
+                    alert('用户名或密码为空');
+                }
+                $.ajax({
+                    type:'post',
+                    url:'http://localhost:8080/admin/user/login',
+                    data:{
+                        username:username,
+                        password:password
+                    },
+                    success:function(backData){
+                        if(backData.code == 200){
+                            window.location.href = './index.html';
+                            return;
+                        }
+                        alert('用户名或密码错误');
+                    }
+                })
+            })
+        })
+    </script>
 </body>
 
 </html>
