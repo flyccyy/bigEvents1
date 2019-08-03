@@ -73,6 +73,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="3" class="text-center">
+                            <!--模态框的使用：data-toggle="modal",data-target="模态框id"，只给一个标签设置时可以这样用，多个标签用js调用的方法-->
                             <a href="#" class="btn btn-success" data-toggle="modal" data-target="#addModal">新增分类</a>
                         </td>
                     </tr>
@@ -110,6 +111,7 @@
     </div>
 
     <script>
+        //模态框的调用，默认隐藏
         $('#addModal').modal({
             show: false,
             backdrop: false
@@ -124,9 +126,13 @@
             $('#addModal').modal('hide');
         });
 
+        var that1;
         $('.category_table').delegate('a', 'click', function () {
+            that1 = $(this);
+            //是编辑按钮的话就显示模态框
             if ($(this).hasClass('btn-info')) {
                 $('#addModal .modal-title').html('修改分类名称');
+                $('#model_add').text('保存');
                 $('#addModal').modal('show');
             }
         })      
@@ -138,7 +144,8 @@
                 <td>{{$value.name}}</td>
                 <td>{{$value.slug}}</td>
                 <td class="text-center">
-                    <a href="javascript:editTr({&quot;id&quot;:&quot;1&quot;,&quot;slug&quot;:&quot;uncategorized&quot;,&quot;name&quot;:&quot;未分类&quot;});" class="btn btn-info btn-xs">编辑</a>
+                    <a href="javascript:void(0);" class="btn btn-info btn-xs" >编辑</a>
+                    <!-- <a href="javascript:editTr({&quot;id&quot;:&quot;1&quot;,&quot;slug&quot;:&quot;uncategorized&quot;,&quot;name&quot;:&quot;未分类&quot;});" class="btn btn-info btn-xs" >编辑</a> -->
                     <a href="javascript:void(0);" class="btn btn-danger btn-xs" data-id="{{$value.id}}">删除</a>
                 </td>
             </tr>
@@ -146,7 +153,7 @@
       </script>
     <script>
         $(function () {
-           
+
             function add() {
                 $.ajax({
                     url: 'http://localhost:8080/admin/category/list',
@@ -161,56 +168,103 @@
                 })
             }
             add();
-            //新增分类按钮
+            //新增按钮
             $('#model_add').on('click', function () {
                 var name = $('.addname').val();
                 var slug = $('.addnick').val();
+                if ($('#model_add').text() == "新增") {
+                    $.ajax({
+                        type: 'post',
+                        url: 'http://localhost:8080/admin/category/add',
+                        data: {
+                            name: name,
+                            slug: slug
+                        },
+                        success: function (backData) {
+                            console.log(backData);
+                            if (backData.code == 201) {
+                                alert('新增成功');
+                                add();
+                            }
+                        }
+                    })
+                }
+                //编辑的保存
+                if ($('#model_add').text() == "保存") {
+                    var id = that1.next().attr('data-id');
+                    // console.log(id);
+                    $.ajax({
+                        type: 'post',
+                        url: 'http://localhost:8080/admin/category/edit',
+                        data: {
+                            id: id,
+                            name: name,
+                            slug: slug
+                        },
+                        success: function (backData) {
+                            if (backData.code == 200) {
+                                alert('编辑成功');
+                                add();
+                            }
+                        }
+                    })
+
+                }
+
+            })
+            //删除按钮
+            $('tbody').on('click', '.btn-danger', function () {
+                var id = $(this).attr('data-id');
+                // console.log(id);
+                var that = $(this);
+                // $('.modal-title').text('温馨提示');
+                // $('.modal-body>form').remove();
+                // $('.modal-body').text('确认删除吗？');
+                // $('#model_add').text('确认');
+                // $('#addModal').modal({
+                //     keyboard: true
+                // });
+               
+                    $.ajax({
+                        type: 'post',
+                        url: 'http://localhost:8080/admin/category/delete',
+                        data: {
+                            id: id
+                        },
+                        success: function (backData) {
+                            if (backData.code == 204) {
+                                that.parent().parent().remove();
+                            }
+                        }
+                    })
+                
+
+            })
+
+            //编辑按钮
+            $('tbody').on('click', '.btn-info', function () {
+                var id = $(this).next().attr('data-id');
+                console.log(id);
                 $.ajax({
-                    type: 'post',
-                    url: 'http://localhost:8080/admin/category/add',
+                    url: 'http://localhost:8080/admin/category/search',
                     data: {
-                        name: name,
-                        slug: slug
+                        id: id
                     },
                     success: function (backData) {
-                        console.log(backData);
-                        if (backData.code == 201) {
-                            alert('新增成功');
-                            add();
+                        // console.log(backData);
+                        // console.log(backData.data);
+                        // console.log(backData.data[0].name);
+                        //不是遍历，直接backData.data.name拿不到
+                        if (backData.code == 200) {
+                            $('.addname').val(backData.data[0].name);
+                            $('.addnick').val(backData.data[0].slug);
                         }
                     }
                 })
             })
 
-            // $.ajax({
-            //         url:'http://localhost:8080/admin/category/search',
-            //         data:{
-            //             id:id
-            //         },
-            //         success:function(backData){
-            //             if(backData.code == 200){
-                            
-            //             }
-            //         }
-            //     })
-            //删除按钮
-            $('tbody').on('click','.btn-danger',function(){
-                var id = $(this).attr('data-id');
-                // console.log(id);
-                var that = $(this);
-                $.ajax({
-                    type:'post',
-                    url:'http://localhost:8080/admin/category/delete',
-                    data:{
-                        id:id
-                    },
-                    success:function(backData){
-                        if(backData.code == 204){
-                            that.parent().parent().remove();
-                        }
-                    }
-                })
-            })
+            //问题：编辑的模态框跟删除的一样：先不做删除的模态框
+
         })
     </script>
 
