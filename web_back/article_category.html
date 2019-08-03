@@ -184,7 +184,10 @@
                             console.log(backData);
                             if (backData.code == 201) {
                                 alert('新增成功');
+                                $('.addname').val("");
+                                $('.addnick').val("");
                                 add();
+
                             }
                         }
                     })
@@ -214,9 +217,7 @@
             })
             //删除按钮
             $('tbody').on('click', '.btn-danger', function () {
-                var id = $(this).attr('data-id');
-                // console.log(id);
-                var that = $(this);
+
                 // $('.modal-title').text('温馨提示');
                 // $('.modal-body>form').remove();
                 // $('.modal-body').text('确认删除吗？');
@@ -224,7 +225,10 @@
                 // $('#addModal').modal({
                 //     keyboard: true
                 // });
-               
+                if (confirm('确认删除吗？')) {
+                    var id = $(this).attr('data-id');
+                    // console.log(id);
+                    var that = $(this);
                     $.ajax({
                         type: 'post',
                         url: 'http://localhost:8080/admin/category/delete',
@@ -237,7 +241,9 @@
                             }
                         }
                     })
-                
+                }
+
+
 
             })
 
