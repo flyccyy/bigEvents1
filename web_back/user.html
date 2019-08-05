@@ -101,6 +101,7 @@
                             //因为是嵌套的，所以不用跳转
                             // window.location.href = "./index.html"
                             //解决：刷新父窗口，刷新当前整个页面，用户体验不够好
+                            alert('修改成功');
                             parent.window.location.reload();
 
                             //解决2：重新发送ajax请求，获取修改后的信息，显示在首页对应的标签
@@ -108,6 +109,9 @@
                     }
                 })
             })
+            //文件上传美化没做
+            //mySql 数据库的不要重新打开
+            //先找有没有一样的value属性的值的，如果没有，就去没有value属性的otpion里面找，
         })
     </script>
 </body>

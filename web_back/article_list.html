@@ -267,12 +267,63 @@
 
         </div>
     </div>
+    <script src="./js/template-web.js"></script>
+    <script id="arc_list" type="text/html">
+        {{each data.data}}
+        <tr>
+                        
+                <td>{{$value.title}}</td>
+                <td>{{$value.author}}</td>
+                <td>{{$value.categoryName}}</td>
+                <td class="text-center">{{$value.date}}</td>
 
+
+                <td class="text-center">{{$value.state}}</td>
+
+
+                <td class="text-center">
+                    <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
+                    <a href="javascript:deleteTr( 1005 );" class="btn btn-danger btn-xs">删除</a>
+                </td>
+            </tr>
+            {{/each}}
+    </script>
     <script>
         // 设置左侧菜单
         $('#release_btn').click(function(){
             window.parent.setMenu(1,1);
         })
+        $(function(){
+            var arcticleArr = [];
+            $.ajax({
+                url:'http://localhost:8080/admin/category/list',
+                success:function(back){
+                    console.log(back);
+                    arcticleArr = back.data;
+                }
+            })
+            $.ajax({
+                url:'http://localhost:8080/admin/article/query',
+                data:{
+                    state:'已发布'
+                },
+                success:function(backData){
+                    for(var i = 0 ;i<backData.data.data.length;i++){
+                        for(var j = 0;j<arcticleArr.length;j++){
+                            if(backData.data.data[i].categoryId == arcticleArr[j].id){
+                                backData.data.data[i].categoryName = arcticleArr[j].name;
+                                break;
+                            }
+                        }
+                    }
+                    console.log(backData);
+                    var res = template('arc_list',backData);
+                    $('tbody').html(res);
+                }
+            })
+           
+        })
+        //注意发送几个ajax请求谁先返回的问题
     </script>
 
 </body>
