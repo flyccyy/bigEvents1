@@ -27,19 +27,19 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章标题：</label>
                     <div class="col-sm-10">
-                        <input type="email" class="form-control title" id="inputEmail3" placeholder="文章标题">
+                        <input type="email" class="form-control title" id="inputEmail3" name="title" placeholder="文章标题">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">文章封面：</label>
                     <div class="col-sm-10">
-                        <input type="file" class="cover" id="exampleInputFile">
+                        <input type="file" class="cover" id="exampleInputFile" name="cover">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章类别：</label>
                     <div class="col-sm-4">
-                        <select class="form-control category">
+                        <select class="form-control category" name="categoryId">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -53,7 +53,7 @@
                     <div class="col-sm-4">
 
                         <div class="input-group">
-                            <input type="text" class="form-control date" placeholder="YYYY-MM-DD" id="dateinput">
+                            <input type="text" class="form-control date" placeholder="YYYY-MM-DD" id="dateinput" name="date">
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="button"
                                     onclick="jeDate('#dateinput',{trigger:false,format: 'YYYY-MM-DD'})"><i
@@ -72,7 +72,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success">发布</button>
+                        <button type="submit" class="btn btn-success btn-release">发布</button>
                         <button type="submit" class="btn btn-default">存为草稿</button>
                     </div>
                 </div>
@@ -80,18 +80,36 @@
         </div>
     </div>
     <script>
-        // $(function () {
-        //     $('.btn-success').on('click', function (e) {
-        //         e.preventDefault();
-        //         var title = $('.title').val();
-        //         var file = $('.cover')[0].files[0];
-        //         var cover = URL.createObjectURL(file);
-        //         var categoryId = 
-        //         // console.log(cover);
+        $(function () {
+            $('.btn-release').on('click', function (e) {
+                e.preventDefault();
+                // var title = $('.title').val();
+                // // var file = $('.cover')[0].files[0];
+                // var cover = $('.cover')[0].files[0];
+                // var categoryId = $('.category').val();
+                // var date = $('#dateinput').val();
+                // var content = $('#rich_content').text();
+                // // console.log(cover);
+                // // console.log(categoryId,date,title,content);
+                var fd = new FormData($('form')[0]);
+                $.ajax({
+                    type:'post',
+                    url:'http://localhost:8080/admin/article/publish',
+                    data:fd,
+                    contentType:false,
+                    processData:false,
+                    success:function(back){
+                        console.log(back);
+                        if(back.code == 200){
+                            //发表成功后回到文章列表页面？
+                            window.location.href = './article_list.html';
+                        }
+                    }
+                })
 
 
-        //     })
-        // })
+            })
+        })
     </script>
 
     <script>
